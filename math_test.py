@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 import time
+from streamlit_autorefresh import st_autorefresh
 
 TEST_DURATION = 300
 QUESTION_POOL_SIZE = 100
@@ -108,11 +109,16 @@ def run_math_test():
             "high_correct": 0,
         }
 
-    elapsed = time.time() - st.session_state.math_start_time
-    remaining = int(TEST_DURATION - elapsed)
+    # 🔥 Auto refresh every second
+    st_autorefresh(interval=1000, key="math_timer")
 
-    mins = max(0, remaining) // 60
-    secs = max(0, remaining) % 60
+    # Timer calculation (scientifically correct method)
+    elapsed = time.time() - st.session_state.math_start_time
+    remaining = max(0, int(TEST_DURATION - elapsed))
+
+    mins = remaining // 60
+    secs = remaining % 60
+
     st.metric("⏳ Time Remaining", f"{mins:02d}:{secs:02d}")
 
     # ================= TIME UP =================
